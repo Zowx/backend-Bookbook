@@ -1,8 +1,8 @@
-const userService = require('../services/userService');
-const jwtUtils = require('../utils/jwtUtils');
-const bcrypt = require('bcrypt');
+import * as userService from '../services/userService.js';
+import * as jwtUtils from '../utils/jwtUtils.js';
+import bcrypt from 'bcrypt';
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   const { email, username, password } = req.body;
 
   if (!email || !username || !password) {
@@ -11,14 +11,33 @@ exports.register = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await userService.createUser({ email, username, password: hashedPassword });
-    res.status(201).json({ message: 'User created successfully', user });
+    const createdUsers = await userService.createUser({ 
+      email, 
+      username, 
+      password_hash: hashedPassword,
+      created_at: new Date(),
+      role_id: 1,
+      sub: false
+    });
+
+    // Vérifie si un utilisateur a été créé
+    if (!createdUsers || createdUsers.length === 0) {
+      throw new Error('User creation failed');
+    }
+
+    const user = createdUsers[0]; // Récupère le premier utilisateur
+    const { password_hash, ...userWithoutPassword } = user;
+
+    res.status(201).json({ 
+      message: 'User created successfully', 
+      user: userWithoutPassword 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error creating user', error: error.message });
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -43,7 +62,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
     const user = await userService.getUserById(req.user.id);
     if (!user) {

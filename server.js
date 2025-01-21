@@ -1,16 +1,19 @@
-// server.js
-const express = require('express');
-const dotenv = require('dotenv');
-
-dotenv.config();
+import express from 'express';
+import authRoutes from './src/routes/authRoutes.js';
 
 const app = express();
-const port = process.env.PORT || 5001;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/users', authRoutes);
+
 
 app.get('/', (req, res) => {
-  res.send('Hello from the Bookbook back-end!');
+  res.send('Hello, World!');
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -1,13 +1,13 @@
-const jwtUtils = require('../utils/jwtUtils');
+import { verifyToken } from '../utils/jwtUtils.js';
 
-exports.authenticate = (req, res, next) => {
+export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     return res.status(401).json({ message: 'Token is required' });
   }
 
   try {
-    const decoded = jwtUtils.verifyToken(token);
+    const decoded = verifyToken(token);
     req.user = decoded;
     next();
   } catch (error) {

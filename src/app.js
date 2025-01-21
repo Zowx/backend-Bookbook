@@ -1,11 +1,17 @@
-const express = require('express');
-const authRoutes = require('./routes/authRoutes');
+import express from 'express';
+import authRoutes from './routes/authRoutes';
 
 const app = express();
 
+// Middleware pour analyser le corps des requêtes JSON
 app.use(express.json());
+
+// Ajout des routes pour l'authentification
 app.use('/api/users', authRoutes);
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+// Point d'entrée principal
+app.get('/', (req, res) => {
+  res.send('Server is running');
 });
+
+module.exports = app;
