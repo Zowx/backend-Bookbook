@@ -1,5 +1,5 @@
 import * as userService from '../services/userService.js';
-import * as jwtUtils from '../utils/jwtUtils.js';
+import jwtUtils from '../utils/jwtUtils.js';
 import bcrypt from 'bcrypt';
 
 export const register = async (req, res) => {
